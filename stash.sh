@@ -6,7 +6,7 @@ start_time=$(date +%s)
 # Script to check status of all repos
 
 # List of directories to exclude the gitignore updation
-excludedDirectories="gitignore/ private-files/ samples/"
+excludedDirectories="samples/"
 
 # Change to root directory
 cd ..

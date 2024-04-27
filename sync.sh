@@ -3,7 +3,7 @@
 # Record the start time
 start_time=$(date +%s)
 
-# Script to check status of all repos
+# Script to sync all repos
 
 # List of directories to exclude the gitignore updation
 excludedDirectories="samples/"
@@ -28,8 +28,7 @@ check_status() {
   # Pull from the remote
   git pull origin main >/dev/null 2>&1
 
-  if [[ "$(git status | grep "Changes not staged for commit:")" = "Changes not staged for commit:" || 
-  "$(git status | grep "Untracked files:")" = "Untracked files:" ]]; then
+  if [[ "$(git status | grep "Changes not staged for commit:")" = "Changes not staged for commit:" ]]; then
     # Changes not staged
     echo -e "\n$dir \n$(git status) \n"
   elif [[ "$(git status | grep "Changes to be committed:")" = "Changes to be committed:" ]]; then
@@ -37,12 +36,12 @@ check_status() {
     echo -e "\n$dir \n$(git status) \n"
   elif [[ "$(git status | grep "Your branch is ahead of")" =~ "Your branch is ahead of" ]]; then
     # Changes commited, but not pushed 
-    echo -e "\n$dir \n$(git status) \n"
+    
+    # Push the latest commits
+    echo -e "\n$dir \n$(git push origin main)"
   elif [[ "$(git status | grep "nothing to commit, working tree clean")" == "nothing to commit, working tree clean" ]]; then
     # No new changes 
     :
-  else 
-    echo -e "\n$dir \n$(git status) \n"
   fi
 
   # Pop the stashed changes
@@ -77,5 +76,5 @@ duration=$((end_time - start_time))
 
 # Empty line
 echo "
-Git status check completed in ${duration} seconds!
+Git changes synced in ${duration} seconds!
 "
