@@ -11,8 +11,8 @@ excludedDirectories="gitignore/ private-files/ samples/"
 # Change to root directory
 cd ..
 
-# Function to check status for a single repository
-check_status() {
+# Function to check stash for a single repository
+check_stash() {
   
   local dir=$1
 
@@ -25,11 +25,10 @@ check_status() {
   # Pull from the remote
   git pull origin main >/dev/null 2>&1
 
-  if [[ "$(git status | grep "nothing to commit, working tree clean")" != "nothing to commit, working tree clean" ]]; then
-    echo "
-$dir
-$(git status)
-"
+  if [ "$(git stash list)" != "" ]; then
+    echo ""
+    echo "$dir"
+    echo "$(git stash list)"
   fi
 
   # Change back to the root directory
@@ -37,7 +36,7 @@ $(git status)
 }
 
 # Export the function to make it available to parallel
-export -f check_status
+export -f check_stash
 
 # Iterate over all directories
 for dir in */; do
@@ -45,8 +44,8 @@ for dir in */; do
   # Skip directories in exclude directories
   if [[ $excludedDirectories != *"$dir"* ]]; then
     
-    # Run check_status function in parallel for each directory
-    check_status "$dir" &
+    # Run check_stash function in parallel for each directory
+    check_stash "$dir" &
   fi
 done
 
@@ -61,5 +60,5 @@ duration=$((end_time - start_time))
 
 # Empty line
 echo "
-Git status check completed in ${duration} seconds!
+Git stash check completed in ${duration} seconds!
 "
