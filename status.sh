@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# Script to check status of 
+# Record the start time
+start_time=$(date +%s)
+
+# Script to check status of all repos
 
 # List of directories to exclude the gitignore updation
 excludedDirectories="gitignore/ private-files/ samples/"
@@ -16,6 +19,12 @@ for dir in */; do
 
     # Change to that subdirectory
     cd $dir
+
+    # Checkout the main branch
+    git checkout main >/dev/null 2>&1
+
+    # Pull from the remote
+    git pull origin main >/dev/null 2>&1
 
     if [ "$(git status | grep "nothing to commit, working tree clean")" = "nothing to commit, working tree clean" ]; then
       :
@@ -38,7 +47,13 @@ for dir in */; do
   fi
 done
 
+# Record the end time
+end_time=$(date +%s)
+
+# Calculate the duration
+duration=$((end_time - start_time))
+
 # Empty line
 echo ""
-echo "Git status check completed!"
+echo "Git status check completed in ${duration} seconds!"
 echo ""
