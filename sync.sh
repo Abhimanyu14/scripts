@@ -11,8 +11,8 @@ excludedDirectories="samples/"
 # Change to root directory
 cd ..
 
-# Function to check status for a single repository
-check_status() {
+# Function to sync changes for a single repository
+sync_changes() {
   
   local dir=$1
 
@@ -28,20 +28,26 @@ check_status() {
   # Pull from the remote
   git pull origin main >/dev/null 2>&1
 
-  if [[ "$(git status | grep "Changes not staged for commit:")" = "Changes not staged for commit:" ]]; then
+  if [[ "$(git status | grep "Changes not staged for commit:")" == "Changes not staged for commit:" || 
+  "$(git status | grep "Untracked files:")" == "Untracked files:" ]]; then
     # Changes not staged
     echo -e "\n$dir \n$(git status) \n"
-  elif [[ "$(git status | grep "Changes to be committed:")" = "Changes to be committed:" ]]; then
+  elif [[ "$(git status | grep "Changes to be committed:")" == "Changes to be committed:" ]]; then
     # Changes staged, but not commited 
     echo -e "\n$dir \n$(git status) \n"
   elif [[ "$(git status | grep "Your branch is ahead of")" =~ "Your branch is ahead of" ]]; then
     # Changes commited, but not pushed 
     
-    # Push the latest commits
+    # Print the directory name
     echo -e "\n$dir"
+
+    # Push the latest commits
+    git push origin main >/dev/null 2>&1
   elif [[ "$(git status | grep "nothing to commit, working tree clean")" == "nothing to commit, working tree clean" ]]; then
     # No new changes 
     :
+  else 
+    echo -e "\n$dir \n$(git status) \n"
   fi
 
   # Pop the stashed changes
@@ -52,7 +58,7 @@ check_status() {
 }
 
 # Export the function to make it available to parallel
-export -f check_status
+export -f sync_changes
 
 # Iterate over all directories
 for dir in */; do
@@ -60,8 +66,8 @@ for dir in */; do
   # Skip directories in exclude directories
   if [[ $excludedDirectories != *"$dir"* ]]; then
     
-    # Run check_status function in parallel for each directory
-    check_status "$dir" &
+    # Run sync_changes function in parallel for each directory
+    sync_changes "$dir" &
   fi
 done
 
