@@ -38,7 +38,7 @@ check_status() {
     # Changes commited, but not pushed 
     
     # Push the latest commits
-    echo -e "\n$dir \n$(git push origin main)"
+    echo -e "\n$dir"
   elif [[ "$(git status | grep "nothing to commit, working tree clean")" == "nothing to commit, working tree clean" ]]; then
     # No new changes 
     :
