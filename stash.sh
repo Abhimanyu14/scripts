@@ -26,9 +26,7 @@ check_stash() {
   git pull origin main >/dev/null 2>&1
 
   if [ "$(git stash list)" != "" ]; then
-    echo ""
-    echo "$dir"
-    echo "$(git stash list)"
+    echo -e "\n$dir \n$(git stash list)"
   fi
 
   # Change back to the root directory

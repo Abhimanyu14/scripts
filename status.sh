@@ -25,11 +25,14 @@ check_status() {
   # Pull from the remote
   git pull origin main >/dev/null 2>&1
 
-  if [[ "$(git status | grep "nothing to commit, working tree clean")" != "nothing to commit, working tree clean" ]]; then
-    echo "
-$dir
-$(git status)
-"
+  if [[ "$(git status | grep "Changes not staged for commit:")" = "Changes not staged for commit:" ]]; then
+    # Changes not staged
+    echo -e "\n$dir \n$(git status) \n"
+  elif [[ "$(git status | grep "Changes to be committed:")" = "Changes to be committed:" ]]; then
+    # Changes staged, but not commited 
+    echo -e "\n$dir \n$(git status) \n"
+  elif [[ "$(git status | grep "nothing to commit, working tree clean")" != "nothing to commit, working tree clean" ]]; then
+    echo -e "\n$dir \n$(git status) \n"
   fi
 
   # Change back to the root directory
