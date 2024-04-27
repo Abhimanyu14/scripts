@@ -31,8 +31,12 @@ check_status() {
   elif [[ "$(git status | grep "Changes to be committed:")" = "Changes to be committed:" ]]; then
     # Changes staged, but not commited 
     echo -e "\n$dir \n$(git status) \n"
-  elif [[ "$(git status | grep "nothing to commit, working tree clean")" != "nothing to commit, working tree clean" ]]; then
+  elif [[ "$(git status | grep "Your branch is ahead of")" =~ "Your branch is ahead of" ]]; then
+    # Changes commited, but not pushed 
     echo -e "\n$dir \n$(git status) \n"
+  elif [[ "$(git status | grep "nothing to commit, working tree clean")" == "nothing to commit, working tree clean" ]]; then
+    # No new changes 
+    :
   fi
 
   # Change back to the root directory
