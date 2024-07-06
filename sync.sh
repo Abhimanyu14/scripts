@@ -39,7 +39,7 @@ sync_changes() {
     # Changes commited, but not pushed 
     
     # Print the directory name
-    echo -e "\n$dir"
+    echo -e "\nSynced $dir"
 
     # Push the latest commits
     git push origin main >/dev/null 2>&1
